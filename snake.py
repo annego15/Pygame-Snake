@@ -10,23 +10,23 @@ cell_size = 20
 assert board_length % cell_size == 0, "Window width must be a multiple of cell size."
 assert board_height % cell_size == 0, "Window height must be a multiple of cell size."
 
-gitter_size_length = board_length // cell_size
-gitter_size_height = board_height // cell_size
+coordinates_length = board_length // cell_size
+coordinates_height = board_height // cell_size
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
 class Game:
-    def __init__(self, screen, cell_size):
-        self.snake_tiles_x = [gitter_size_length//2]
-        self.snake_tiles_y = [gitter_size_height//2]
-        self.food_x = random.randint(0, gitter_size_length-1)
-        self.food_y = random.randint(0, gitter_size_height - 1)
+    def __init__(self, screen_, cell_size_):
+        self.snake_tiles_x = [coordinates_length // 2]
+        self.snake_tiles_y = [coordinates_height // 2]
+        self.food_x = random.randint(0, coordinates_length - 1)
+        self.food_y = random.randint(0, coordinates_height - 1)
         self.food_eaten = False
         self.direction = 0      # 0 = up, 1 = right, 2 = down, 3 = left
-        self.screen = screen
-        self.cell_size = cell_size
+        self.screen = screen_
+        self.cell_size = cell_size_
         self.game_over = False
 
     def update_game(self):
@@ -39,7 +39,7 @@ class Game:
         elif self.direction == 3:
             self.check_cell(self.snake_tiles_x[0] - 1, self.snake_tiles_y[0])
 
-        if self.snake_tiles_x[0] >= gitter_size_length or self.snake_tiles_y[0] >= gitter_size_height \
+        if self.snake_tiles_x[0] >= coordinates_length or self.snake_tiles_y[0] >= coordinates_height \
                 or self.snake_tiles_x[0] < 0 or self.snake_tiles_y[0] < 0:
             return False
 
@@ -53,13 +53,13 @@ class Game:
             for i in range(len(self.snake_tiles_x)):
                 if self.snake_tiles_x[i] == self.food_x and self.snake_tiles_y[i] == self.food_y:
                     self.food_eaten = True
-                    self.food_x = random.randint(0, gitter_size_length - 1)
-                    self.food_y = random.randint(0, gitter_size_height - 1)
+                    self.food_x = random.randint(0, coordinates_length - 1)
+                    self.food_y = random.randint(0, coordinates_height - 1)
                 else:
                     found = True
 
     def check_cell(self, x, y):
-        if x >= gitter_size_length or y >= gitter_size_height or x < 0 or y < 0:
+        if x >= coordinates_length or y >= coordinates_height or x < 0 or y < 0:
             self.game_over = True
 
         for i in range(len(self.snake_tiles_x)):
@@ -72,14 +72,14 @@ class Game:
     def draw_game(self):
         self.screen.fill(BLACK)
         for i in range(len(self.snake_tiles_x)):
-            x, y = self.board_to_pixel_koord(self.snake_tiles_x[i], self.snake_tiles_y[i])
+            x, y = self.calc_coordinates(self.snake_tiles_x[i], self.snake_tiles_y[i])
             a_rect = pygame.Rect(x, y, self.cell_size, self.cell_size)
             pygame.draw.rect(self.screen, GREEN, a_rect)
-        x, y = self.board_to_pixel_koord(self.food_x, self.food_y)
+        x, y = self.calc_coordinates(self.food_x, self.food_y)
         a_rect = pygame.Rect(x, y, self.cell_size, self.cell_size)
         pygame.draw.rect(self.screen, RED, a_rect)
 
-    def board_to_pixel_koord(self, x, y):
+    def calc_coordinates(self, x, y):
         return x * self.cell_size, y * self.cell_size
 
 def main():
