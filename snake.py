@@ -32,6 +32,7 @@ class Player:
         self.direction = 0      # 0 = up, 1 = right, 2 = down, 3 = left
         self.game_over_player = False
         self.food_eaten = False
+        self.player_rect = pygame.Rect(0, 0, cell_size, cell_size)
         game.add_player(self)
 
     def update_player(self, game):
@@ -64,8 +65,13 @@ class Player:
         self.snake_tiles_x.insert(0, x)
         self.snake_tiles_y.insert(0, y)
 
+    def draw_player(self, screen):
+        for i in range(len(self.snake_tiles_x)):
+            self.player_rect.x, self.player_rect.y = to_pixel(self.snake_tiles_x[i], self.snake_tiles_y[i])
+            pygame.draw.rect(screen, self.color, self.player_rect)
 
-def calc_coordinates(x, y):
+
+def to_pixel(x, y):
     return x * cell_size, y * cell_size
 
 
@@ -76,6 +82,8 @@ class Game:
         self.screen = screen_
         self.game_over = False
         self.players = []
+        x, y = to_pixel(self.food_x, self.food_y)
+        self.food_rect = pygame.Rect(x, y, cell_size, cell_size)
 
     def add_player(self, player):
         self.players.append(player)
@@ -103,6 +111,7 @@ class Game:
         for player in self.players:
             if player.game_over_player:
                 self.players.remove(player)
+                del player
 
         # update food position if eaten
         if food_eaten:
@@ -121,19 +130,16 @@ class Game:
                                 found_good_position = False
                                 break
                 # repeat loop if collision is found
+            # update position of food if good new position is found
+            self.food_rect.x, self.food_rect.y = to_pixel(self.food_x, self.food_y)
 
     def draw_game(self):
         self.screen.fill(BLACK)
         # draw all players
         for player in self.players:
-            for i in range(len(player.snake_tiles_x)):
-                x, y = calc_coordinates(player.snake_tiles_x[i], player.snake_tiles_y[i])
-                a_rect = pygame.Rect(x, y, cell_size, cell_size)
-                pygame.draw.rect(self.screen, player.color, a_rect)
+            player.draw_player(self.screen)
         # draw food
-        x, y = calc_coordinates(self.food_x, self.food_y)
-        a_rect = pygame.Rect(x, y, cell_size, cell_size)
-        pygame.draw.rect(self.screen, RED, a_rect)
+        pygame.draw.rect(self.screen, RED, self.food_rect)
 
 
 def change_direction(player, event):
@@ -166,8 +172,7 @@ def main():
     Player(my_game, BLUE, K_UP, K_RIGHT, K_DOWN, K_LEFT)
     Player(my_game, CYAN, K_u, K_k, K_j, K_h)
 
-
-    fps = 5  # frames per second setting
+    fps = 10  # frames per second setting
     fps_clock = pygame.time.Clock()
     is_running = True
     while is_running:   # the main game loop
