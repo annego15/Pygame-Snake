@@ -17,16 +17,22 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+CYAN = (0, 255, 255)
 
 
 class Player:
-    def __init__(self, color_):
+    def __init__(self, game, color_, key_up_, key_right_, key_down_, key_left_):
+        self.color = color_
+        self.key_up = key_up_
+        self.key_right = key_right_
+        self.key_down = key_down_
+        self.key_left = key_left_
         self.snake_tiles_x = [random.randint(coordinates_length // 4, (coordinates_length // 4) * 3)]
         self.snake_tiles_y = [random.randint(coordinates_length // 4, (coordinates_length // 4) * 3)]
         self.direction = 0      # 0 = up, 1 = right, 2 = down, 3 = left
-        self.color = color_
         self.game_over_player = False
         self.food_eaten = False
+        game.add_player(self)
 
     def update_player(self, game):
         if self.direction == 0:
@@ -130,7 +136,18 @@ class Game:
         pygame.draw.rect(self.screen, RED, a_rect)
 
 
-def change_direction(player, new_dir):
+def change_direction(player, event):
+    if event.key == player.key_up:
+        new_dir = 0
+    elif event.key == player.key_right:
+        new_dir = 1
+    elif event.key == player.key_down:
+        new_dir = 2
+    elif event.key == player.key_left:
+        new_dir = 3
+    else:
+        return
+
     if len(player.snake_tiles_x) == 1:
         player.direction = new_dir
     else:
@@ -145,11 +162,10 @@ def main():
     pygame.display.set_caption('Snake')
 
     my_game = Game(screen)
-    player1 = Player(GREEN)
-    player2 = Player(BLUE)
+    Player(my_game, GREEN, K_w, K_d, K_s, K_a)
+    Player(my_game, BLUE, K_UP, K_RIGHT, K_DOWN, K_LEFT)
+    Player(my_game, CYAN, K_u, K_k, K_j, K_h)
 
-    my_game.add_player(player1)
-    my_game.add_player(player2)
 
     fps = 5  # frames per second setting
     fps_clock = pygame.time.Clock()
@@ -160,25 +176,9 @@ def main():
                     (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
                 is_running = False
             elif event.type == KEYDOWN:
-                # WASD (player 1)
-                if event.key == K_w:
-                    change_direction(player1, 0)
-                elif event.key == K_d:
-                    change_direction(player1, 1)
-                elif event.key == K_s:
-                    change_direction(player1, 2)
-                elif event.key == K_a:
-                    change_direction(player1, 3)
-
-                # arrow keys (player 2)
-                elif event.key == K_UP:
-                    change_direction(player2, 0)
-                elif event.key == K_RIGHT:
-                    change_direction(player2, 1)
-                elif event.key == K_DOWN:
-                    change_direction(player2, 2)
-                elif event.key == K_LEFT:
-                    change_direction(player2, 3)
+                # change direction if keys pressed
+                for player in my_game.players:
+                    change_direction(player, event)
 
         my_game.update_game()
 
