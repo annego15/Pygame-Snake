@@ -18,6 +18,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+
 class Player:
     def __init__(self, color_):
         self.snake_tiles_x = [random.randint(coordinates_length // 4, (coordinates_length // 4) * 3)]
@@ -58,7 +59,8 @@ class Player:
         self.snake_tiles_y.insert(0, y)
 
 
-
+def calc_coordinates(x, y):
+    return x * cell_size, y * cell_size
 
 
 class Game:
@@ -119,16 +121,13 @@ class Game:
         # draw all players
         for player in self.players:
             for i in range(len(player.snake_tiles_x)):
-                x, y = self.calc_coordinates(player.snake_tiles_x[i], player.snake_tiles_y[i])
+                x, y = calc_coordinates(player.snake_tiles_x[i], player.snake_tiles_y[i])
                 a_rect = pygame.Rect(x, y, cell_size, cell_size)
                 pygame.draw.rect(self.screen, player.color, a_rect)
         # draw food
-        x, y = self.calc_coordinates(self.food_x, self.food_y)
+        x, y = calc_coordinates(self.food_x, self.food_y)
         a_rect = pygame.Rect(x, y, cell_size, cell_size)
         pygame.draw.rect(self.screen, RED, a_rect)
-
-    def calc_coordinates(self, x, y):
-        return x * cell_size, y * cell_size
 
 
 def change_direction(player, new_dir):
@@ -152,10 +151,10 @@ def main():
     my_game.add_player(player1)
     my_game.add_player(player2)
 
-    FPS = 5  # frames per second setting
+    fps = 5  # frames per second setting
     fps_clock = pygame.time.Clock()
     is_running = True
-    while is_running: # the main game loop
+    while is_running:   # the main game loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT or \
                     (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
@@ -189,9 +188,8 @@ def main():
             my_game.draw_game()
 
             pygame.display.update()
-            fps_clock.tick(FPS)
+            fps_clock.tick(fps)
 
 
 if __name__ == '__main__':
     main()
-
