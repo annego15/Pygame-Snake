@@ -19,7 +19,7 @@ class AiFollow(Player):
         vector = (self.game.food_x - self.snake_tiles_x[0], self.snake_tiles_y[0] - self.game.food_y)
         # calculate angle to food with angle = tan^-1(y/x)
         angle = math.atan2(vector[1], vector[0])/math.pi
-        print("Vector {} / {} angle: {}".format(vector[0], vector[1], angle))
+        # print("Vector {} / {} angle: {}".format(vector[0], vector[1], angle))
         if 0.25 <= angle < 0.75:
             self.find_good_dir(0)
         elif 0.75 <= angle or angle < -0.75:
@@ -48,11 +48,11 @@ class AiFollow(Player):
                 # found direction which works
                 break
         else:
-            print("At this moment he realised: He is fucked!")
+            # print("At this moment he realised: He is fucked!")
             return
 
         # return direction which works
-        print("Ai dir to food: {}, dir to avoid collision: {}".format(new_dir, try_dir))
+        # print("Ai dir to food: {}, dir to avoid collision: {}".format(new_dir, try_dir))
         self.change_direction_ai(try_dir)
         return
 
