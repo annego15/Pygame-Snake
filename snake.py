@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 
 from game import *
+from ai import *
 
 board_width = 640  # board width in pixels
 board_height = 540  # board height in pixels
@@ -21,9 +22,12 @@ def main():
     pygame.display.set_caption('Snake')
 
     my_game = Game(screen, board_width, board_height, cell_size)
-    Player(my_game, GREEN, K_w, K_d, K_s, K_a)
-    Player(my_game, BLUE, K_UP, K_RIGHT, K_DOWN, K_LEFT)
-    Player(my_game, CYAN, K_u, K_k, K_j, K_h)
+    ai1 = AiFollow(my_game, BLUE)
+    Player(my_game, GREEN, K_w, K_a, K_s, K_d)
+    #Player(my_game, BLUE, K_UP, K_LEFT, K_DOWN, K_RIGHT)
+    #Player(my_game, CYAN, K_u, K_h, K_j, K_k)
+
+    ai1.pass_players(my_game.players)
 
     fps_clock = pygame.time.Clock()
     is_running = True
@@ -35,8 +39,10 @@ def main():
             elif event.type == KEYDOWN:
                 # change direction if keys pressed
                 for player in my_game.players:
-                    player.change_direction(event)
+                    if not player.ai:
+                        player.change_direction(event)
 
+        ai1.update_ai()
         my_game.update_game()
 
         if not my_game.players:
