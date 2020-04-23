@@ -44,7 +44,7 @@ class Game:
                 for i in range(len(other_player.snake_tiles_x)):
                     if player.snake_tiles_x[0] == other_player.snake_tiles_x[i] and \
                             player.snake_tiles_y[0] == other_player.snake_tiles_y[i]:
-                        player.game_over = True
+                        player.game_over_player = True
                         break
 
         # remove players which are game over

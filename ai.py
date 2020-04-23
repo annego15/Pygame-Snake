@@ -21,13 +21,13 @@ class AiFollow(Player):
         angle = math.atan2(vector[1], vector[0])/math.pi
         print("Vector {} / {} angle: {}".format(vector[0], vector[1], angle))
         if 0.25 <= angle < 0.75:
-            self.direction = self.find_good_dir(0)
+            self.find_good_dir(0)
         elif 0.75 <= angle or angle < -0.75:
-            self.direction = self.find_good_dir(1)
+            self.find_good_dir(1)
         elif -0.75 <= angle < -0.25:
-            self.direction = self.find_good_dir(2)
+            self.find_good_dir(2)
         else:
-            self.direction = self.find_good_dir(3)
+            self.find_good_dir(3)
 
     def find_good_dir(self, new_dir):
         try_dir = new_dir
@@ -49,11 +49,12 @@ class AiFollow(Player):
                 break
         else:
             print("At this moment he realised: He is fucked!")
-            return self.direction
+            return
 
         # return direction which works
         print("Ai dir to food: {}, dir to avoid collision: {}".format(new_dir, try_dir))
-        return try_dir
+        self.change_direction_ai(try_dir)
+        return
 
 
 
