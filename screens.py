@@ -65,27 +65,29 @@ class MainScreen:
         self.ai_side.update_ai()
         self.side_game.update_game()
 
-        if not self.side_game.players:
+        if self.ai_side.game_over_player:
+            self.side_game.players.remove(self.ai_side)
+            del self.ai_side
             self.ai_side = AiFollow(self.side_game, DARK_BLUE)
             self.ai_side.pass_players(self.side_game.players)
 
-        if self.frame_counter > 130:
+        if self.frame_counter > 90:
             self.side_game.draw_game()
 
             self.screen.blit(self.buttons_img, (50, 140))
             self.selection_rect.y = 140 + self.selection * 100
             pygame.draw.rect(self.screen, WHITE, self.selection_rect, width=5, border_radius=0)
 
-        if self.frame_counter <= 90:
+        if self.frame_counter <= 50:
             y_cords = 221
-        elif self.frame_counter >= 130:
+        elif self.frame_counter >= 90:
             y_cords = 21
         else:
-            y_cords = 200 - (self.frame_counter - 90)*5 + 21
+            y_cords = 200 - (self.frame_counter - 50)*5 + 21
 
         for i, char in enumerate(self.chars):
             for j, cords in enumerate(char):
-                if j < self.frame_counter / 6:
+                if j < self.frame_counter / 3:
                     x, y = cords
                     self.char_rect.x = self.x_cords[i] + (x * 20)
                     self.char_rect.y = y_cords + (y * 20)
@@ -104,10 +106,11 @@ class StageGame:
         self.player = Player(self.my_game, GREEN, K_w, K_a, K_s, K_d)
         self.ai1.pass_players(self.my_game.players)
         self.frame_counter = 0
-        self.frame_ai_dead = 0
+        self.frame_ai_dead = 9999999999999
         self.game_over = False
 
-        self.rect_cover = pygame.Rect(0, 0, board_width, board_height)
+        self.rect_cover = pygame.Surface((board_width, board_height), pygame.SRCALPHA, 32)
+        self.rect_cover.fill((0, 0, 0, 127))
         self.game_over_img = pygame.image.load('game_over.png')
 
     def keypress(self, event):
@@ -118,6 +121,7 @@ class StageGame:
         else:
             if event.key == K_RETURN:
                 self.next_stage = MainScreen(self.screen)
+                self.next_stage.frame_counter = 90
 
     def render(self):
         if not self.game_over:
@@ -126,19 +130,20 @@ class StageGame:
                 self.my_game.update_game()
 
                 if self.ai1.game_over_player:
-                    self.frame_ai_dead = self.frame_counter
+                    self.frame_ai_dead = self.frame_counter + 90
+                    del self.ai1
 
                 if self.player.game_over_player:
                     self.game_over = True
 
-                if self.frame_ai_dead + 90 < self.frame_counter:
-                    self.frame_ai_dead = 0
+                if self.frame_ai_dead < self.frame_counter:
+                    self.frame_ai_dead = 999999999999
                     self.ai1 = AiFollow(self.my_game, BLUE)
                     self.ai1.pass_players(self.my_game.players)
             self.my_game.draw_game()
         else:
             self.my_game.draw_game()
-            pygame.draw.rect(self.screen, (0, 0, 0, 127), self.rect_cover)
+            self.screen.blit(self.rect_cover, (0, 0))
             self.screen.blit(self.game_over_img, (30, 120))
 
 
