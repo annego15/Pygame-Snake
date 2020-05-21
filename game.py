@@ -141,13 +141,13 @@ class Player:
             pygame.draw.rect(screen, self.color, self.player_rect)
 
     def change_direction(self, event):
-        if event.key == self.key_up:
+        if event.key in self.key_up:
             new_dir = 0
-        elif event.key == self.key_left:
+        elif event.key in self.key_left:
             new_dir = 1
-        elif event.key == self.key_down:
+        elif event.key in self.key_down:
             new_dir = 2
-        elif event.key == self.key_right:
+        elif event.key in self.key_right:
             new_dir = 3
         else:
             return
