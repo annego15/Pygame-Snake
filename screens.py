@@ -1,5 +1,7 @@
 from pygame.locals import *
 import pygame
+import os
+import sys
 
 from game import *
 from ai import *
@@ -17,6 +19,17 @@ board_height = 540  # board height in pixels
 
 cell_size = 20  # pixels of a single coordinate
 
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 class MainScreen:
     def __init__(self, screen):
         self.screen = screen
@@ -25,9 +38,9 @@ class MainScreen:
         self.page = 0
 
         self.selection = 0
-        self.buttons_img = pygame.image.load('buttons.png')
-        self.tutorial_img = pygame.image.load('tutorial.png')
-        self.credits_img = pygame.image.load('credits.png')
+        self.buttons_img = pygame.image.load(resource_path('buttons.png'))
+        self.tutorial_img = pygame.image.load(resource_path('tutorial.png'))
+        self.credits_img = pygame.image.load(resource_path('credits.png'))
         self.selection_rect = pygame.Rect(50, 140, 260, 60)
         self.side_game = Game(screen, 260, 360, 20, 330, 140, DARK_RED)
         self.ai_side = AiFollow(self.side_game, DARK_BLUE)
@@ -134,9 +147,9 @@ class StageGame:
 
         self.rect_cover = pygame.Surface((board_width, board_height), pygame.SRCALPHA, 32)
         self.rect_cover.fill((0, 0, 0, 127))
-        self.game_over_img = pygame.image.load('game_over.png')
+        self.game_over_img = pygame.image.load(resource_path('game_over.png'))
 
-        self.font = pygame.font.Font('PixelGameFont.ttf', 32)
+        self.font = pygame.font.Font(resource_path('PixelGameFont.ttf'), 32)
 
 
     def keypress(self, event):
