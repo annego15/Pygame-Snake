@@ -140,7 +140,7 @@ class StageGame:
         self.player = Player(self.my_game, GREEN, (K_w, K_UP), (K_a, K_LEFT), (K_s, K_DOWN), (K_d, K_RIGHT))
         self.ai1.pass_players(self.my_game.players)
         self.frame_counter = 0
-        self.frame_ai_dead = 9999999999999
+        self.frame_ai_dead = 999999999999
         self.game_over = False
         self.highscore = "ERROR"
         self.score = 0
@@ -165,12 +165,19 @@ class StageGame:
     def render(self):
         if not self.game_over:
             if (self.frame_counter % 6) == 0:
-                self.ai1.update_ai()
+                if self.ai1:
+                    self.ai1.update_ai()
                 self.my_game.update_game()
 
-                if self.ai1.game_over_player:
+                if self.ai1 and self.ai1.game_over_player:
                     self.frame_ai_dead = self.frame_counter + 90
-                    del self.ai1
+                    self.my_game.players.remove(self.ai1)
+                    self.ai1 = None
+
+                if self.frame_ai_dead < self.frame_counter:
+                    self.frame_ai_dead = 999999999999
+                    self.ai1 = AiFollow(self.my_game, BLUE)
+                    self.ai1.pass_players(self.my_game.players)
 
                 if self.player.game_over_player:
                     self.game_over = True
@@ -191,10 +198,6 @@ class StageGame:
                     finally:
                         file.close()
 
-                if self.frame_ai_dead < self.frame_counter:
-                    self.frame_ai_dead = 999999999999
-                    self.ai1 = AiFollow(self.my_game, BLUE)
-                    self.ai1.pass_players(self.my_game.players)
             self.my_game.draw_game()
         else:
             self.my_game.draw_game()
