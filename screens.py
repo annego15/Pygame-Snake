@@ -176,12 +176,12 @@ class StageGame:
                     self.game_over = True
                     self.score = len(self.player.snake_tiles_x)
 
-                    file = open("highscore_ai.txt", "r")
+                    file = open(resource_path("highscore_ai.txt"), "r")
                     try:
                         stored_score = int(file.readline())
                         if stored_score < self.score:
                             file.close()
-                            file = open("highscore_ai.txt", "w")
+                            file = open(resource_path("highscore_ai.txt"), "w")
                             file.write(str(self.score))
                             self.highscore = self.score
                         else:
